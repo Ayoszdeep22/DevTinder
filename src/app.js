@@ -155,12 +155,27 @@ function (req,res){
 app.use("/profile", (req, res) => {
     res.send("Hello from the profile route");
 });
+app.use("/getdataerror",(req,res)=>{
+throw new err("error sent");
+res.send("the error is here")
+});
 
 
 // This is the catch-all fallback for the base route "/"
 // Useful to send responses to general requests to your server
-app.use("/", (req, res) => {
+
+
+///ERROR Handling??
+
+
+app.use("/", (err,req, res,next) => {
+    if(err){
+        console.log("the error is here");
+        
+        res.status(500).send("unuthorized error");
+    }
+    else{
     res.send("Hello from the server on the base route");
-});
+}});
 
 

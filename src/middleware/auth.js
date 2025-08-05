@@ -1,5 +1,5 @@
 const Adminauth=(req,res,next)=>{
-    console.log("Admin suth is checking");
+    console.log("Admin auth is checking");
     
     const token ="xyz";
     const ifauthorized=token==="xyz";
@@ -13,7 +13,7 @@ const Adminauth=(req,res,next)=>{
 
 };
 const profileauth=(req,res,next)=>{
-    console.log("Admin suth is checking");
+    console.log("User auth is checking");
     
     const token ="xyz";
     const ifauthorized=token==="xyz";
