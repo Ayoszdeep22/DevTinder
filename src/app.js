@@ -73,7 +73,7 @@ app.get(/ab?c/, (req, res) => {
 
 /**
  * Matches: /ac, /abc, /abbbc, etc.
- * The "*" matches zero or more characters (can be empty or many 'b's)
+ * The "*" matches zero or more characters (can be empty or many 'b's or any other)
  */
 app.get(/ab*c/, (req, res) => {
     res.send("Matched route with zero or more 'b': /ab*c");
@@ -83,7 +83,7 @@ app.get(/ab*c/, (req, res) => {
  * Matches exactly "/a/"
  * This route is NOT pattern-based — literal match only.
  */
-app.get(/a/, (req, res) => {
+app.get(/ab/, (req, res) => {
     res.send("Matched route /a/");
 });
 
@@ -97,6 +97,22 @@ app.get(/.*fly$/, (req, res) => {
 });
 
 
+///// Middleware concept
+
+const {Adminauth,profileauth}=require("./middleware/auth")
+app.use("/admin",Adminauth)
+
+app.get("/admin/getalldata",(req,res,next)=>{
+    res.send("authorized data");}
+  
+);
+app.get("/admin/deletealldata",(req,res,next)=>{
+    res.send("deleted data");}
+    );
+
+
+
+
 // ======================
 // Route Matching Order
 // ======================
@@ -105,10 +121,35 @@ app.get(/.*fly$/, (req, res) => {
 // Always put more specific routes first such as '/profile/use'
 // This prevents it from being overridden by less specific routes
 
-app.use("/profile/use", (req, res) => {
-    res.send("You have logged into profile data");
+
+
+/// ROute handling//
+
+app.use("/profile/use",profileauth, [(req, res,next) => {
+    // res.send("You have logged into profile data");
+    console.log("the terminal output 1");
+    
     // We are using an API call here
-});
+    next();
+},
+ function (req,res,next){
+    console.log("the  terminal output 2");
+    // res.send("the res 2");
+    next();
+},
+function (req,res,next){
+    console.log("the  terminal output 3");
+    // res.send("the res 3");
+    next();
+
+}],
+function (req,res){
+    console.log("the  terminal output 4");
+    res.send("the res 4");},
+);
+
+
+
 
 // This will match /profile, /profile/anything if above isn't matched
 app.use("/profile", (req, res) => {
@@ -121,3 +162,5 @@ app.use("/profile", (req, res) => {
 app.use("/", (req, res) => {
     res.send("Hello from the server on the base route");
 });
+
+
