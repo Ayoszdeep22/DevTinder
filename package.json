@@ -4,7 +4,7 @@
   "description": "tinder for devlopment people ",
   "main": "index.js",
   "scripts": {
-    "dev":"nodemon src/app.js",
+    "dev": "nodemon src/app.js",
     "start": "node src/app.js"
   },
   "keywords": [
@@ -13,6 +13,7 @@
   "author": "\"Ayoszdeep\"",
   "license": "ISC",
   "dependencies": {
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "mongoose": "^8.17.0"
   }
 }
