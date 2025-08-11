@@ -93,6 +93,34 @@ app.get("/findbyid",async (req,res)=>{
 
 });
 
+app.delete("/user",async (req,res)=>{
+    const userId=req.body.userId;
+    try {
+        const userdel= await User.findByIdAndDelete(userId);
+        res.send("user deleted succesfully");
+        
+    } catch (error) {
+           res.status(400).send("could not able to delete user data");
+        
+    }
+});
+
+app.patch("/user",async (req,res)=>{
+    const data=req.body;
+    const userdata=req.body.userId;
+    
+    try {
+        const usera= await User.findByIdAndUpdate(userdata,data,{returnDocument:"after",});
+        console.log(usera);
+        
+        res.send(" updated succesfullyl");
+        
+    } catch (error) {
+        res.status(404).send("Document not found");
+        
+    }
+
+});
 
 
 
