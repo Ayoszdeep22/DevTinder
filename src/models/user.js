@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const { default: isURL } = require("validator/lib/isURL");
-const validator =require("validator");
+const validator = require("validator");
 
 const userSchema = new mongoose.Schema({
   firstName: {
@@ -10,8 +10,7 @@ const userSchema = new mongoose.Schema({
   },
   lastName: {
     type: String,
-    lowercase:true,
-    
+    lowercase: true,
   },
   emailId: {
     type: String,
@@ -19,18 +18,18 @@ const userSchema = new mongoose.Schema({
     unique: true,
     lowercase: true,
     trim: true,
-       validate(value) {
-         const alowedomains=["@gmail.com", "@yahoo.com", "@facebook.com"];
-      if (!alowedomains.some(domain=>value.endsWith(domain))) {
-        throw new Error("gender not known");
+    validate(value) {
+      const alowedomains = ["@gmail.com", "@yahoo.com", "@facebook.com"];
+      if (!alowedomains.some(domain => value.endsWith(domain))) {
+        throw new Error("Email domain not allowed"); // fixed message
       }
     },
   },
   age: {
     type: Number,
-    min: 18,
-    required:true,
-   },
+    min:18,
+    required: true,
+  },
   gender: {
     type: String,
     validate(value) {
@@ -43,17 +42,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 5,
-    maxlength: 20,
-    validate(value){
-   if (!validator.isStrongPassword(value)) {
-      throw new Error("not a strong password");
-      
-      
-   }
-
-  }
-
-
+    maxlength: 200,
   },
   about: {
     type: String,
@@ -61,28 +50,20 @@ const userSchema = new mongoose.Schema({
   },
   skills: {
     type: [String],
-    default: ["this does not have default skills"], 
+    default: ["this does not have default skills"],
   },
   profilePic: {
-  type: String,
-  validate(value){
-   if (!validator.isURL(value)) {
-      throw new Error("not a vlaidta ephot ");
-      
-      
-   }
-
-  }
-
-
-},
-},
-{
-   timestamps:true,
-}
-
-
-);
+    type: String,
+    validate(value) {
+      // ✅ Allow empty profilePic, only validate if present
+      if (value && !validator.isURL(value)) {
+        throw new Error("not a valid photo");
+      }
+    }
+  },
+}, {
+  timestamps: true,
+});
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;
