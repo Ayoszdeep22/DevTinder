@@ -110,13 +110,13 @@ app.patch("/user",async (req,res)=>{
     const userdata=req.body.userId;
     
     try {
-        const usera= await User.findByIdAndUpdate(userdata,data,{returnDocument:"after",});
+        const usera= await User.findByIdAndUpdate(userdata,data,{returnDocument:"after",runValidators:true,});
         console.log(usera);
         
         res.send(" updated succesfullyl");
         
-    } catch (error) {
-        res.status(404).send("Document not found");
+    } catch (err) {
+        res.status(404).send("Update Failed : "+err.message());
         
     }
 
