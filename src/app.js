@@ -22,6 +22,16 @@ app.post("/signup",async(req,res)=>{
     const user= new User(req.body)// instace of a user module 
 
     try {
+         const postvalidation = ["firstName", "lastName", "emailId", "password"];
+        const hasAllFields = postvalidation.every(field => field in req.body);
+
+        if (!hasAllFields) {
+            throw new Error("Please include firstName, lastName, emailId, and password");
+        }
+
+
+
+
         await user.save();// it will be save on a db and returns a promise
     res.send("user Added succesfully");
 
@@ -105,11 +115,21 @@ app.delete("/user",async (req,res)=>{
     }
 });
 
-app.patch("/user",async (req,res)=>{
+app.patch("/user/:userId",async (req,res)=>{
     const data=req.body;
-    const userdata=req.body.userId;
+    const userdata=req.params?.userId;
     
     try {
+        const allowedschema=["age","gender","about","skills","firstName"];
+        const allowupdates =Object.keys(data).every((k)=>allowedschema.includes(k));
+        if(data?.skills.length>=10){
+            throw new Error("skills are over");
+            
+
+        }
+        if(!allowupdates){
+            throw new Error("Update not allowed");}
+// aboce is validating the api so we can update somethings not all things..
         const usera= await User.findByIdAndUpdate(userdata,data,{returnDocument:"after",runValidators:true,});
         console.log(usera);
         
