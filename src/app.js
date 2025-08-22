@@ -127,8 +127,7 @@ app.patch("/user/:userId", async (req, res) => {
         res.status(404).send("Update Failed : " + err.message);
     }
 });
-
-
+// at lec 9 we have created login api
 app.post("/login", async (req, res) => {
   try {
     const { password, emailId } = req.body;
