@@ -6,6 +6,9 @@ const validatorcheck = require("./utils/validator");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
 const cookieParser = require("cookie-parser");
+
+const jwt=require("jsonwebtoken");
+
 app.use(cookieParser());
 
 
@@ -132,16 +135,33 @@ app.patch("/user/:userId", async (req, res) => {
 });
 //lec 10
 app.get("/profile", async (req, res) => {
-  const getcookie = req.cookies;
+ try{ const getcookie = req.cookies;
   const { token } = getcookie;
-
   if (!token) {
-    return res.status(401).send("Access denied. No token provided.");
+    throw new Error("token missing");
+    
+    
+  }
+  //validate token 
+  const idecodeMessage=await jwt.verify(token,"DEVtinder@123");
+  console.log(idecodeMessage );
+  const{_id}=idecodeMessage;
+//   console.log("the token of user id is : "+_id);
+const user =await User.findById(_id);
+if (!user) {
+    throw new Error("user not found");
+    
+    
+}
+// If token exists, proceed
+//   console.log("Token found:", token);
+  res.send(user);}
+ 
+  catch (error) {
+    console.error(error);
+    res.status(400).send("Error: " + error.message);
   }
 
-  // If token exists, proceed
-  console.log("Token found:", token);
-  res.send("cookie sent");
 });
 
 
@@ -168,11 +188,9 @@ app.post("/login", async (req, res) => {
 
     if (passwordcheck) {
         // creating a token
-
-
-
-        //sending a token by adding in cookie
-        res.cookie("token","dhdsjfhsfsdflssdjdfkjslffjsfjlsljfsjlkffjlksk");
+        const token = jwt.sign({_id:user._id},"DEVtinder@123")
+         //sending a token by adding in cookie
+        res.cookie("token",token);
     
 
 
