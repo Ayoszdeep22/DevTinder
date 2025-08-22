@@ -5,6 +5,9 @@ const User = require("./models/user");
 const validatorcheck = require("./utils/validator");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
+
 
 
 app.use(express.json());
@@ -127,12 +130,29 @@ app.patch("/user/:userId", async (req, res) => {
         res.status(404).send("Update Failed : " + err.message);
     }
 });
+//lec 10
+app.get("/profile", async (req, res) => {
+  const getcookie = req.cookies;
+  const { token } = getcookie;
+
+  if (!token) {
+    return res.status(401).send("Access denied. No token provided.");
+  }
+
+  // If token exists, proceed
+  console.log("Token found:", token);
+  res.send("cookie sent");
+});
+
+
+
+
+
 // at lec 9 we have created login api
 app.post("/login", async (req, res) => {
   try {
     const { password, emailId } = req.body;
-
-    // Validate email format first
+  // Validate email format first  
     if (!validator.isEmail(emailId)) {
       return res.status(400).send("Invalid email format");
     }
@@ -147,6 +167,15 @@ app.post("/login", async (req, res) => {
     const passwordcheck = await bcrypt.compare(password, user.password);
 
     if (passwordcheck) {
+        // creating a token
+
+
+
+        //sending a token by adding in cookie
+        res.cookie("token","dhdsjfhsfsdflssdjdfkjslffjsfjlsljfsjlkffjlksk");
+    
+
+
       res.send("login successful");
     } else {
       res.status(400).send("Incorrect password");
