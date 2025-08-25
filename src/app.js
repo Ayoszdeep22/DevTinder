@@ -193,13 +193,15 @@ app.post("/login", async (req, res) => {
     }
 
     // bcrypt.compare is async, await the result!
-    const passwordcheck = await bcrypt.compare(password, user.password);
+    // const passwordcheck = await bcrypt.compare(password, user.password);
+    const passwordcheck= await user.validatePassword(password);
 
     if (passwordcheck) {
 
          ///lec 10
         // creating a token
-        const token = jwt.sign({_id:user._id},"DEVtinder@123",{expiresIn:"1d"},);
+        // const token = jwt.sign({_id:user._id},"DEVtinder@123",{expiresIn:"1d"},); // this works also
+        const token = await user.getJWT();
          //sending a token by adding in cookie
         res.cookie("token",token);
     
@@ -216,12 +218,12 @@ app.post("/login", async (req, res) => {
   }
 });
 app.get("/connectionReq",profileauth,(req,res)=>{
-    console.log("Profileauth is succeaul authenticated");
+    console.log("Profileauth is succesfulul authenticated");
     const user =req.user;
     res.send(user.firstName  +  "this is how to use jwt token");
     
 })
-
+// this is used to auth user
 
 
 connectDB().then(() => {
