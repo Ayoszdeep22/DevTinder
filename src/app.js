@@ -8,7 +8,7 @@ const validator = require("validator");
 const cookieParser = require("cookie-parser");
 
 const jwt=require("jsonwebtoken");
-
+const  {profileauth}=require("./middleware/auth");// lect 10 importing token auth in all baove
 app.use(cookieParser());
 
 
@@ -61,93 +61,100 @@ app.post("/signup", async (req, res) => {
     }
 });
 
-///find user api if there are duplicates
-app.get("/user", async (req, res) => {
-    const users = req.body.emailId;
-    try {
-        const userget = await User.findOne({ emailId: users });
-        if (!userget) {
-            throw new Error("Something went wrong");
-        } else {
-            res.send(userget);
-        }
-    } catch (error) {
-        res.status(404).send("Something went wrong");
-    }
-    // this i harcoated data we basically not use this we find by id type we haveti write inbody specifically
-});
+// ///find user api if there are duplicates
+// app.get("/user", async (req, res) => {
+//     const users = req.body.emailId;
+//     try {
+//         const userget = await User.findOne({ emailId: users });
+//         if (!userget) {
+//             throw new Error("Something went wrong");
+//         } else {
+//             res.send(userget);
+//         }
+//     } catch (error) {
+//         res.status(404).send("Something went wrong");
+//     }
+//     // this i harcoated data we basically not use this we find by id type we haveti write inbody specifically
+// });
 
-// Feed api get all the users from the db
-app.get("/feed", async (req, res) => {
-    try {
-        const feed = await User.find({});
-        res.send(feed);
-    } catch (error) {
-        res.status(400).send("could not able to get user data");
-    }
-});
+// // // Feed api get all the users from the db
+// // app.get("/feed", async (req, res) => {
+// //     try {
+// //         const feed = await User.find({});
+// //         res.send(feed);
+// //     } catch (error) {
+// //         res.status(400).send("could not able to get user data");
+// //     }
+// // });
 
-app.get("/findbyid", async (req, res) => {
-    const id = req.query.id; // /findbyid?id=66b9f73a12de1223d8c223ce
-    try {
-        const adventure = await User.findById(id, 'firstName emailId');
-        if (!adventure) {
-            return res.status(404).send("Document not found");
-        }
-        res.json(adventure); // .json() best for sending objects
-    } catch (error) {
-        res.status(404).send("Document not found");
-    }
-});
+// app.get("/findbyid", async (req, res) => {
+    
+//     const id = req.query.id; // /findbyid?id=66b9f73a12de1223d8c223ce
+//     try {
+//         const adventure = await User.findById(id, 'firstName emailId');
+//         if (!adventure) {
+//             return res.status(404).send("Document not found");
+//         }
+//         res.json(adventure); // .json() best for sending objects
+//     } catch (error) {
+//         res.status(404).send("Document not found");
+//     }
+// });
 
-app.delete("/user", async (req, res) => {
-    const userId = req.body.userId;
-    try {
-        await User.findByIdAndDelete(userId);
-        res.send("user deleted succesfully");
-    } catch (error) {
-        res.status(400).send("could not able to delete user data");
-    }
-});
+// app.delete("/user", async (req, res) => {
+//     const userId = req.body.userId;
+//     try {
+//         await User.findByIdAndDelete(userId);
+//         res.send("user deleted succesfully");
+//     } catch (error) {
+//         res.status(400).send("could not able to delete user data");
+//     }
+// });
 
-app.patch("/user/:userId", async (req, res) => {
-    const data = req.body;
-    const userdata = req.params?.userId;
+// app.patch("/user/:userId", async (req, res) => {
+//     const data = req.body;
+//     const userdata = req.params?.userId;
 
-    try {
-        const allowedschema = ["age", "gender", "about", "skills", "firstName"];
-        const allowupdates = Object.keys(data).every((k) => allowedschema.includes(k));
-        if (data?.skills.length >= 10) {
-            throw new Error("skills are over");
-        }
-        if (!allowupdates) {
-            throw new Error("Update not allowed");
-        }
-        // aboce is validating the api so we can update somethings not all things..
-        const usera = await User.findByIdAndUpdate(userdata, data, { returnDocument: "after", runValidators: true });
-        console.log(usera);
+//     try {
+//         const allowedschema = ["age", "gender", "about", "skills", "firstName"];
+//         const allowupdates = Object.keys(data).every((k) => allowedschema.includes(k));
+//         if (data?.skills.length >= 10) {
+//             throw new Error("skills are over");
+//         }
+//         if (!allowupdates) {
+//             throw new Error("Update not allowed");
+//         }
+//         // aboce is validating the api so we can update somethings not all things..
+//         const usera = await User.findByIdAndUpdate(userdata, data, { returnDocument: "after", runValidators: true });
+//         console.log(usera);
 
-        res.send(" updated succesfullyl");
+//         res.send(" updated succesfullyl");
 
-    } catch (err) {
-        res.status(404).send("Update Failed : " + err.message);
-    }
-});
+//     } catch (err) {
+//         res.status(404).send("Update Failed : " + err.message);
+//     }
+// });
 //lec 10
-app.get("/profile", async (req, res) => {
- try{ const getcookie = req.cookies;
-  const { token } = getcookie;
-  if (!token) {
-    throw new Error("token missing");
+
+
+
+app.get("/profile",profileauth, async (req, res) => {
+try{ 
+// const getcookie = req.cookies;//
+//   const { token } = getcookie;
+//   if (!token) {
+//     throw new Error("token missing");
     
     
-  }
-  //validate token 
-  const idecodeMessage=await jwt.verify(token,"DEVtinder@123");
-  console.log(idecodeMessage );
-  const{_id}=idecodeMessage;
+//   }
+//   //validate token 
+//   const isTokenValid=await jwt.verify(token,"DEVtinder@123");
+//   console.log(isTokenValid );
+//   const{_id}=isTokenValid;
 //   console.log("the token of user id is : "+_id);
-const user =await User.findById(_id);
+// const user =await User.findById(_id);
+
+const user =req.user;// is said in auth.js user is passed there
 if (!user) {
     throw new Error("user not found");
     
@@ -155,7 +162,9 @@ if (!user) {
 }
 // If token exists, proceed
 //   console.log("Token found:", token);
-  res.send(user);}
+  res.send(user);
+// sending if the user information in the postmann of the user when token is valid after logining api
+}
  
   catch (error) {
     console.error(error);
@@ -187,8 +196,10 @@ app.post("/login", async (req, res) => {
     const passwordcheck = await bcrypt.compare(password, user.password);
 
     if (passwordcheck) {
+
+         ///lec 10
         // creating a token
-        const token = jwt.sign({_id:user._id},"DEVtinder@123")
+        const token = jwt.sign({_id:user._id},"DEVtinder@123",{expiresIn:"1d"},);
          //sending a token by adding in cookie
         res.cookie("token",token);
     
@@ -204,6 +215,12 @@ app.post("/login", async (req, res) => {
     res.status(400).send("Error: " + error.message);
   }
 });
+app.get("/connectionReq",profileauth,(req,res)=>{
+    console.log("Profileauth is succeaul authenticated");
+    const user =req.user;
+    res.send(user.firstName  +  "this is how to use jwt token");
+    
+})
 
 
 
