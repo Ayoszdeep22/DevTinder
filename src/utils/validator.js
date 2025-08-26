@@ -1,5 +1,6 @@
 const validator = require("validator");
 
+
 const validatorcheck = (req) => {
     const { firstName, lastName, emailId, password } = req.body;
 
@@ -19,4 +20,15 @@ const validatorcheck = (req) => {
     }
 };
 
-module.exports = validatorcheck;
+const ValidateprofileEditData=(req)=>
+{
+    
+    const AllowedFields=["gender","age","skills","about","emailId"];
+    const isAllowed=Object.keys(req.body).every(i=>AllowedFields.includes(i));
+
+    return isAllowed;
+   
+
+}
+
+module.exports = {validatorcheck,ValidateprofileEditData};

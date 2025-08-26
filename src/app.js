@@ -6,9 +6,10 @@ const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 app.use(express.json());
 
-const auth=require("./routes/auth");
-const profile=require("./routes/profile");
-const req= require("./routes/req");
+const auth    = require("./routes/auth");    // ✅ correct
+const profile = require("./routes/profile"); // ✅ correct
+const req     = require("./routes/req");     // ✅ correct
+
 app.use("/",auth);
 app.use("/",profile);
 app.use("/",req);
