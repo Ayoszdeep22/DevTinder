@@ -1,65 +1,72 @@
 const express = require("express");
 const connectDB = require("./config/database");
 const app = express();
-const User = require("./models/user");
-const validatorcheck = require("./utils/validator");
-const bcrypt = require("bcrypt");
-const validator = require("validator");
+// const User = require("./models/user");
+// const validatorcheck = require("./utils/validator");
+// const bcrypt = require("bcrypt");
+// const validator = require("validator");
 const cookieParser = require("cookie-parser");
 
-const jwt=require("jsonwebtoken");
-const  {profileauth}=require("./middleware/auth");// lect 10 importing token auth in all baove
+// const jwt=require("jsonwebtoken");
+// const  {profileauth}=require("./middleware/auth");// lect 10 importing token auth in all baove
 app.use(cookieParser());
-
-
-
 app.use(express.json());
 
-app.post("/signup", async (req, res) => {
-    console.log(req.body);
+const auth=require("./routes/auth");
+const profile=require("./routes/profile");
+const req= require("./routes/req");
+app.use("/",auth);
+app.use("/",profile);
+app.use("/",req);
 
-    // const userObj={
-    //     firstName:"ashish",
-    //     lastName:"pandey",
-    //     emailId :"aashishpandey@gmail.com",
-    //     password:"Ashish06",
-    // }
-    // const user= new User(userobj);// creating an new  instance of a user module
 
-    // earlier now but we can
 
-    try {
-        const postvalidation = ["firstName", "lastName", "emailId", "password"];
-        const hasAllFields = postvalidation.every(field => field in req.body);
 
-        if (!hasAllFields) {
-            throw new Error("Please include firstName, lastName, emailId, and password");
-        }
+// app.post("/signup", async (req, res) => {
+//     console.log(req.body);
 
-        // ✅ moved up from below so variables exist before creating the User
-        const { firstName, lastName, emailId, password,age } = req.body;
-        const passwordHash = bcrypt.hashSync(password, 10);
+//     // const userObj={
+//     //     firstName:"ashish",
+//     //     lastName:"pandey",
+//     //     emailId :"aashishpandey@gmail.com",
+//     //     password:"Ashish06",
+//     // }
+//     // const user= new User(userobj);// creating an new  instance of a user module
 
-        const user = new User({
-            firstName,
-            lastName,
-            emailId: emailId.trim().toLowerCase(),
-            password: passwordHash, 
-            age
-}); // instace of a user module fierst we have used like rew.body here 
+//     // earlier now but we can
 
-        /// vlaidation of data is the first thing we have to 
-        validatorcheck(req);
+//     try {
+//         const postvalidation = ["firstName", "lastName", "emailId", "password"];
+//         const hasAllFields = postvalidation.every(field => field in req.body);
 
-        await user.save();// it will be save on a db and returns a promise
-        res.send("user Added succesfully");
+//         if (!hasAllFields) {
+//             throw new Error("Please include firstName, lastName, emailId, and password");
+//         }
 
-    } catch (error) {
-        console.log("user does not have added succesfully");
-        // During development, show full error
-        res.status(400).send("Error: " + error.message);
-    }
-});
+//         // ✅ moved up from below so variables exist before creating the User
+//         const { firstName, lastName, emailId, password,age } = req.body;
+//         const passwordHash = bcrypt.hashSync(password, 10);
+
+//         const user = new User({
+//             firstName,
+//             lastName,
+//             emailId: emailId.trim().toLowerCase(),
+//             password: passwordHash, 
+//             age
+// }); // instace of a user module fierst we have used like rew.body here 
+
+//         /// vlaidation of data is the first thing we have to 
+//         validatorcheck(req);
+
+//         await user.save();// it will be save on a db and returns a promise
+//         res.send("user Added succesfully");
+
+//     } catch (error) {
+//         console.log("user does not have added succesfully");
+//         // During development, show full error
+//         res.status(400).send("Error: " + error.message);
+//     }
+// });
 
 // ///find user api if there are duplicates
 // app.get("/user", async (req, res) => {
@@ -138,91 +145,91 @@ app.post("/signup", async (req, res) => {
 
 
 
-app.get("/profile",profileauth, async (req, res) => {
-try{ 
-// const getcookie = req.cookies;//
-//   const { token } = getcookie;
-//   if (!token) {
-//     throw new Error("token missing");
+// app.get("/profile",profileauth, async (req, res) => {
+// try{ 
+// // const getcookie = req.cookies;//
+// //   const { token } = getcookie;
+// //   if (!token) {
+// //     throw new Error("token missing");
     
     
-//   }
-//   //validate token 
-//   const isTokenValid=await jwt.verify(token,"DEVtinder@123");
-//   console.log(isTokenValid );
-//   const{_id}=isTokenValid;
-//   console.log("the token of user id is : "+_id);
-// const user =await User.findById(_id);
+// //   }
+// //   //validate token 
+// //   const isTokenValid=await jwt.verify(token,"DEVtinder@123");
+// //   console.log(isTokenValid );
+// //   const{_id}=isTokenValid;
+// //   console.log("the token of user id is : "+_id);
+// // const user =await User.findById(_id);
 
-const user =req.user;// is said in auth.js user is passed there
-if (!user) {
-    throw new Error("user not found");
+// const user =req.user;// is said in auth.js user is passed there
+// if (!user) {
+//     throw new Error("user not found");
     
     
-}
-// If token exists, proceed
-//   console.log("Token found:", token);
-  res.send(user);
-// sending if the user information in the postmann of the user when token is valid after logining api
-}
+// }
+// // If token exists, proceed
+// //   console.log("Token found:", token);
+//   res.send(user);
+// // sending if the user information in the postmann of the user when token is valid after logining api
+// }
  
-  catch (error) {
-    console.error(error);
-    res.status(400).send("Error: " + error.message);
-  }
+//   catch (error) {
+//     console.error(error);
+//     res.status(400).send("Error: " + error.message);
+//   }
 
-});
-
-
+// });
 
 
 
-// at lec 9 we have created login api
-app.post("/login", async (req, res) => {
-  try {
-    const { password, emailId } = req.body;
-  // Validate email format first  
-    if (!validator.isEmail(emailId)) {
-      return res.status(400).send("Invalid email format");
-    }
 
-    // Find user in DB
-    const user = await User.findOne({ emailId: emailId });
-    if (!user) {
-      return res.status(400).send("Email id not found");
-    }
 
-    // bcrypt.compare is async, await the result!
-    // const passwordcheck = await bcrypt.compare(password, user.password);
-    const passwordcheck= await user.validatePassword(password);
+// // at lec 9 we have created login api
+// app.post("/login", async (req, res) => {
+//   try {
+//     const { password, emailId } = req.body;
+//   // Validate email format first  
+//     if (!validator.isEmail(emailId)) {
+//       return res.status(400).send("Invalid email format");
+//     }
 
-    if (passwordcheck) {
+//     // Find user in DB
+//     const user = await User.findOne({ emailId: emailId });
+//     if (!user) {
+//       return res.status(400).send("Email id not found");
+//     }
 
-         ///lec 10
-        // creating a token
-        // const token = jwt.sign({_id:user._id},"DEVtinder@123",{expiresIn:"1d"},); // this works also
-        const token = await user.getJWT();
-         //sending a token by adding in cookie
-        res.cookie("token",token);
+//     // bcrypt.compare is async, await the result!
+//     // const passwordcheck = await bcrypt.compare(password, user.password);
+//     const passwordcheck= await user.validatePassword(password);
+
+//     if (passwordcheck) {
+
+//          ///lec 10
+//         // creating a token
+//         // const token = jwt.sign({_id:user._id},"DEVtinder@123",{expiresIn:"1d"},); // this works also
+//         const token = await user.getJWT();
+//          //sending a token by adding in cookie
+//         res.cookie("token",token);
     
 
 
-      res.send("login successful");
-    } else {
-      res.status(400).send("Incorrect password");
-    }
+//       res.send("login successful"); 
+//     } else {
+//       res.status(400).send("Incorrect password");
+//     }
 
-  } catch (error) {
-    console.error(error);
-    res.status(400).send("Error: " + error.message);
-  }
-});
-app.get("/connectionReq",profileauth,(req,res)=>{
-    console.log("Profileauth is succesfulul authenticated");
-    const user =req.user;
-    res.send(user.firstName  +  "this is how to use jwt token");
+//   } catch (error) {
+//     console.error(error);
+//     res.status(400).send("Error: " + error.message);
+//   }
+// });
+// app.get("/connectionReq",profileauth,(req,res)=>{
+//     console.log("Profileauth is succesfulul authenticated");
+//     const user =req.user;
+//     res.send(user.firstName  +  "this is how to use jwt token");
     
-})
+// })
 // this is used to auth user
 
 
