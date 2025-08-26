@@ -18,9 +18,4 @@ if (!user) {
   }
 
 });
-
-
-
-
-
 module.exports=profileRouter;
