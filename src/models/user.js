@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     uppercase: true,
+    index:true,// normal index to search name by first 
   },
   lastName: {
     type: String,
@@ -17,7 +18,7 @@ const userSchema = new mongoose.Schema({
   emailId: {
     type: String,
     required: true,
-    unique: true,
+    unique: true,//uniques index
     lowercase: true,
     trim: true,
     validate(value) {

@@ -24,6 +24,18 @@ const ConnectionSchecma=new mongoose.Schema({
 
 },{timestamps:true,}
 );
+ ConnectionSchecma.pre("save",function (next) {
+    const connection=this;
+
+       if(connection.SenderConnection.equals(connection.RecieverConnection)){
+        throw new Error("same connectipn");
+        
+       };
+       next();
+
+        
+    });
+    ConnectionSchecma.index({SenderConnection:1,RecieverConnection:1});
 
 
 
