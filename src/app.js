@@ -9,11 +9,13 @@ app.use(express.json());
 const auth    = require("./routes/auth");    // ✅ correct
 const profile = require("./routes/profile"); // ✅ correct
 const req     = require("./routes/req");     // ✅ correct
+const user =require("./routes/user");
+
 
 app.use("/",auth);
 app.use("/",profile);
 app.use("/",req);
-
+app.use("/",user);
 connectDB().then(() => {
     console.log("Database connectted successfully");
     app.listen("7777", () => {

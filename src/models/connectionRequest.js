@@ -2,6 +2,7 @@ const mongoose=require("mongoose");
 const ConnectionSchecma=new mongoose.Schema({
     SenderConnection:{
         type:mongoose.Schema.Types.ObjectId,
+        ref:"User",
         required:true,
 
     },
