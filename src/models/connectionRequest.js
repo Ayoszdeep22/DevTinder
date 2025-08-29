@@ -8,6 +8,7 @@ const ConnectionSchecma=new mongoose.Schema({
     },
     RecieverConnection:{
         type:mongoose.Schema.Types.ObjectId,
+        ref:"User",
         required:true,
     },
     status:{

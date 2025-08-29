@@ -33,8 +33,15 @@ userRouter.get("/user/connections", profileauth, async(req,res)=>{
       ]
     
 
-    });
-      res.json({data:connectionRequests});
+    }).populate("SenderConnection",["firstName","lastName","age"]).populate("RecieverConnection",["firstName","lastName","age"]);
+    const data=connectionRequests.map((row)=> {
+      if(row.SenderConnection.toString()===LoggedInUser._id.toString()){
+        return row.RecieverConnection;
+      }
+        
+       return row.SenderConnection});
+
+      res.json({data});
   } catch (error) {
     res.status(404).send({message:error.message});
   }
