@@ -21,4 +21,23 @@ userRouter.get("/user/request/recieved", profileauth, async (req, res) => {
   }
 });
 
+// people who are connected to me
+userRouter.get("/user/connections", profileauth, async(req,res)=>{
+  try {
+    const LoggedInUser=req.user;
+    const connectionRequests= await  connectionRequest.find({
+      $or:[
+        {RecieverConnection:LoggedInUser._id,status:"accepted"},
+         {SenderConnection:LoggedInUser._id,status:"accepted"},
+
+      ]
+    
+
+    });
+      res.json({data:connectionRequests});
+  } catch (error) {
+    res.status(404).send({message:error.message});
+  }
+});
+
 module.exports = userRouter;
