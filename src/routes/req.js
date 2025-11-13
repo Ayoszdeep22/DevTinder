@@ -47,9 +47,9 @@ request.post("/request/send/:status/:touserId",profileauth,async(req,res)=>{
         const data= await coonnectionRequest.save();
         res.json({
             message:`the data has been send`,
-            data
+            data,
 
-        })
+        })  
         
 
 
@@ -109,3 +109,4 @@ request.post("/request/review/:status/:requestId",profileauth, async(req,res)=>{
 
 
 module.exports=request;
+    

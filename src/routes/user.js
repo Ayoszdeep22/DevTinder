@@ -12,7 +12,7 @@ userRouter.get("/user/request/received", profileauth, async (req, res) => {
     const connectionRequests = await connectionRequest.find({
       RecieverConnection: loggedInUser._id,
       status: "interested"
-    }).populate("SenderConnection", ["firstName", "lastName"]);
+    }).populate("SenderConnection", ["firstName", "lastName","profilePic", "age", "skills", "about"]);
     
     res.status(200).json({ 
       message: "Data fetched successfully", 
@@ -37,8 +37,8 @@ userRouter.get("/user/connections", profileauth, async (req, res) => {
         { RecieverConnection: loggedInUser._id, status: "accepted" },
         { SenderConnection: loggedInUser._id, status: "accepted" }
       ]
-    }).populate("SenderConnection", ["firstName", "lastName", "age"])
-      .populate("RecieverConnection", ["firstName", "lastName", "age"]);
+    }).populate("SenderConnection", ["firstName", "lastName", "age","profilePic","skills","about"])
+      .populate("RecieverConnection", ["firstName", "lastName", "age","profilePic","skills","about"])
 
     // FIX: The logic was inverted - return the OTHER person, not yourself
     const data = connectionRequests.map((row) => {
@@ -58,10 +58,13 @@ userRouter.get("/user/connections", profileauth, async (req, res) => {
 });
 
 // Feed API - get users to potentially connect with
-userRouter.get("/feed", profileauth, async (req, res) => {
+userRouter.get("/user/feed", profileauth, async (req, res) => {
   try {
     const loggedInUser = req.user;
-    
+    const page=parseInt(req.query.page)||1;
+    const pageLimit=parseInt(req.query.pageLimit)||10;
+    const skip=(page-1)*pageLimit;
+
     // Get all connection requests involving the logged-in user
     const connectionRequests = await connectionRequest.find({
       $or: [
@@ -83,7 +86,7 @@ userRouter.get("/feed", profileauth, async (req, res) => {
         { _id: { $nin: Array.from(excludeUsers) } },
         { _id: { $ne: loggedInUser._id } }
       ]
-    }).select("firstName lastName age skills about");
+    }).select("firstName lastName age skills about profilePic").skip(skip).limit(pageLimit);
 
     res.status(200).json({ 
       message: "Feed data fetched successfully",

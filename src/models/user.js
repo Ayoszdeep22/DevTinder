@@ -57,6 +57,7 @@ const userSchema = new mongoose.Schema({
   },
   profilePic: {
     type: String,
+    default:"https://i.pinimg.com/236x/1d/ec/e2/1dece2c8357bdd7cee3b15036344faf5.jpg?nii=t",
     validate(value) {
       // ✅ Allow empty profilePic, only validate if present
       if (value && !validator.isURL(value)) {

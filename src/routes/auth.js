@@ -6,7 +6,7 @@ const User = require("../models/user");
 const validator = require("validator");
 
 authRouter.post("/signup", async (req, res) => {
-    console.log(req.body);
+    
 
 
 
@@ -32,7 +32,8 @@ authRouter.post("/signup", async (req, res) => {
         validatorcheck(req);
 
         await user.save();
-        res.send("user Added succesfully");
+        console.log(req.body);
+       res.json({message:"user has been added succesfully",data:user})
 
     } catch (error) {
         console.log("user does not have added succesfully");
